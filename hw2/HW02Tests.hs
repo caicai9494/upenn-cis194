@@ -51,7 +51,7 @@ ex4Tests = [ testF2 "isConsistent test" isConsistent
 -- Exercise 5 -----------------------------------------
 
 ex5Tests :: [Test]
-ex5Tests = []
+ex5Tests = undefined
 
 -- Exercise 6 -----------------------------------------
 

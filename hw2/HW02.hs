@@ -26,7 +26,7 @@ codes = [[Red], [Green], [Blue], [Yellow], [Orange], [Purple]]
 
 -- Get the number of exact matches between the actual code and the guess
 exactMatches :: Code -> Code -> Int
-exactMatches lhs rhs = length $ filter (\(x,y) -> x == y) $ zip lhs rhs 
+exactMatches lhs rhs = length $ filter (uncurry (==)) $ zip lhs rhs 
 
 -- Exercise 2 -----------------------------------------
 
@@ -36,11 +36,11 @@ countColors c = go colors c
     where go :: Code -> Code -> [Int]
           go _ [] = []
           go [] _ = []
-          go (p:ps) ts = (length $ filter (\x -> x == p) ts) : go ps ts  
+          go (p:ps) ts = (length $ filter (==p) ts) : go ps ts  
 
 -- Count number of matches between the actual code and the guess
 matches :: Code -> Code -> Int
-matches lhs rhs = sum $ map (\(x,y) -> min x y) $ zip (countColors lhs) (countColors rhs) 
+matches lhs rhs = sum $ zipWith min (countColors lhs) (countColors rhs) 
 
 -- Exercise 3 -----------------------------------------
 
@@ -62,33 +62,25 @@ isConsistent (Move lhs a b) rhs = case (getMove lhs rhs) of
 -- Exercise 5 -----------------------------------------
 
 filterCodes :: Move -> [Code] -> [Code]
-filterCodes m c = filter (isConsistent m) c  
+filterCodes m = filter (isConsistent m)  
 
 -- Exercise 6 -----------------------------------------
---temp = foldl (\acc x -> [x] ++ acc) [[Red]] colors  
-{-
-colors :: [Peg]
-colors = [Red, Green, Blue, Yellow, Orange, Purple]
-
-codes :: [Code]
-codes = [[Red], [Green], [Blue], [Yellow], [Orange], [Purple]]
--}
---temp2 :: [Code] -> [Code]
---temp2 codes = map (\x -> foldl (\acc y -> y : acc) [x] colors) colors --[[Red]]
 allCodes :: Int -> [Code]
 allCodes 0 = [[]]
-allCodes n = [ c : code | c <- colors, code <- allCodes (n - 1) ]
-{-
-allCodes :: Int -> [Code]
-allCodes len = helper len codes
-    where helper :: Int -> [Code] -> [Code]
-          helper 1 acc = acc 
-          helper n acc = helper (n-1) (map (\x -> map (\y -> x ++ [y]) colors) acc)
--}
+allCodes n = let code = allCodes (n - 1) in
+             concat $ map (\c -> map (c:) code) colors
+
+-- use list comprehension
+allCodesl :: Int -> [Code]
+allCodesl 0 = [[]]
+allCodesl n = [c : code | c <- colors, code <- allCodesl (n-1)]
+
 -- Exercise 7 -----------------------------------------
 
 solve :: Code -> [Move]
-solve = undefined
+solve secret = let len = length secret 
+                   brutal = allCodes len
+               in filter (\(Move _ i _) -> i == len) $ map (getMove secret) brutal
 
 -- Bonus ----------------------------------------------
 

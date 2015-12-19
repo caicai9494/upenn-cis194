@@ -15,7 +15,7 @@ Introduction to Haskell Solution (Spring 2013)
 
 2. HW2 
   + Complete (ADT 2013)
-  + Not Complete (Polymorphism 2015)
+  + Complete (Polymorphism 2015)
 
 3. HW3 
   + Not Complete (Polymorphism 2013)
